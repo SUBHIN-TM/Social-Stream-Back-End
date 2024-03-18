@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt'
 import jwt from "jsonwebtoken"
 import env from "dotenv"
 env.config()
+import cloudinary from "../Utilities/cloudinary.js"
 
 export const home=async (req,res)=>{
     try {
@@ -99,4 +100,41 @@ export const profile=async (req,res)=>{
         return res.status(500).json({message:"Internal server error"})
     }
    
+}
+
+
+
+export const uploadPost=async (req,res)=>{
+  try {
+      console.log("upload section");
+      // console.log(req.body);
+      // console.log(req.file);
+      const {id} =req.token
+      const {path} =req.file
+      const {title}=req.body
+      console.log(path,title);
+      const cloudinaryResult = await cloudinary.uploader.upload(path, { folder: 'Social Stream Feeds' });
+      if(cloudinaryResult){
+        console.log("succesfully saved in cloudinary",cloudinaryResult);
+      }else{
+        return res.status(400).json({message:"cant add image now"})
+      }
+
+      const user=await User.findOne({_id:id})
+      if(user){
+       user.posts.push({
+        postName:title,
+        postImage:cloudinaryResult.secure_url,
+        publicId:cloudinaryResult.public_id
+       });
+       let result=await user.save();
+       console.log(result);
+       return res.status(200).json({message:"Post Added Successfully"})
+      }
+      return res.status(400).json({message:"cant add image now"})    
+  } catch (error) {
+      console.error("Error from upload",error)
+      return res.status(500).json({message:"Internal server error"})
+  }
+ 
 }

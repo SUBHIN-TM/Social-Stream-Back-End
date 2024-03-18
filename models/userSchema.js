@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
     profileImage:{type:String},
     posts:[{postName:{type:String},
             postImage:{type:String},
+            publicId:{type:String},
             likes:{type:Number},
             comments:[{mail:{type:String}},
                       {text:{type:String}},
