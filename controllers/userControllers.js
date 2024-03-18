@@ -1,4 +1,102 @@
-export const home=(req,res)=>{
-    res.send("hai")
+import User from '../models/userSchema.js';
+import bcrypt from 'bcrypt'
+import jwt from "jsonwebtoken"
+import env from "dotenv"
+env.config()
+
+export const home=async (req,res)=>{
+    try {
+        console.log("Home section");
+        if(req.token){
+            console.log(req.token);
+            return res.status(200).json({name:req.token.name,details:req.token})
+        }
+        
+    } catch (error) {
+        console.error("Error from Home",error)
+    }
+   
+    return res.status(500).json({message:"Internal server error"})
 }
 
+
+export const login=async (req,res)=>{
+    try { console.log('To Do Login Section');
+    console.log(req.body);
+    const mail = req.body.name
+    const password = req.body.password
+    const existing = await User.findOne({ mail: mail })
+   
+    if (!existing) {
+      return res.json({ invalidUser: true })
+    }
+    const passwordMatch = await bcrypt.compare(password, existing.password)
+    if (!passwordMatch) {
+      return res.json({ passwordMissmatch: true })
+    } else {
+      console.log(existing);
+       const payload={id:existing._id,name:existing.name,mail:existing.mail}
+       let key=process.env.JWT_KEY
+     let token=  jwt.sign(payload,key,{expiresIn:'24h'})
+      // console.log(token);
+      return res.json({ dashboard: true ,token});
+    }
+        
+    } catch (error) {
+        console.error("Error from login",error)
+    }
+  
+    return res.status(500).json({message:"Internal server error"})
+}
+
+
+export const signup=async (req,res)=>{
+    try {
+        console.log('To Do signup Section');
+        console.log(req.body);
+        let { name, password, mail } = req.body;
+        const existing = await User.findOne({ mail: mail })
+        const existingName = await User.findOne({ name: name })
+        if(existingName){
+          console.log("name exist");
+          return res.json({ nameExists: true })
+        }
+        else if (existing) {
+          console.log("mail exist");
+          return res.json({ mailExists: true })
+        } 
+        else 
+        {
+          password = await bcrypt.hash(password, 10)
+          const user = new User({
+            name,
+            password,
+            mail,
+          });
+          const result = await user.save();
+          console.log("Registered", result);
+          return res.json({ registered: true, result });
+        }
+    
+        
+    } catch (error) {
+        console.error("Error from signup",error)
+    }
+ 
+    return res.status(500).json({message:"Internal server error"})
+}
+
+
+
+export const profile=async (req,res)=>{
+    try {
+        console.log("Profile section");
+        const response=await User.findOne({mail:req.token.mail})
+        console.log(response);
+        return res.status(200).json({profileDetails:response})   
+    } catch (error) {
+        console.error("Error from profile",error)
+        return res.status(500).json({message:"Internal server error"})
+    }
+   
+}
