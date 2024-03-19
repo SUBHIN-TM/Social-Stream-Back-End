@@ -7,11 +7,28 @@ import cloudinary from "../Utilities/cloudinary.js"
 
 export const home=async (req,res)=>{
     try {
-        console.log("Home section");
+        console.log("Home section");            
+        let result = await User.find();
+        let onlyPosts = result.flatMap((user) =>
+          user.posts.map((post) => ({ ...post.toObject(), name: user.name,mail:user.mail,userId:user._id }))
+        );
+        
+        console.log(onlyPosts);
+        
+
+
+
+       
+
+        
+
+
         if(req.token){
-            console.log(req.token);
-            return res.status(200).json({name:req.token.name,details:req.token})
+          return res.status(200).json({name:req.token.name,details:req.token,allPosts:onlyPosts})
+        }else{
+          return res.status(200).json({posts:result.posts})
         }
+       
         
     } catch (error) {
         console.error("Error from Home",error)
@@ -93,7 +110,7 @@ export const profile=async (req,res)=>{
     try {
         console.log("Profile section");
         const response=await User.findOne({mail:req.token.mail})
-        console.log(response);
+        // console.log(response);
         return res.status(200).json({profileDetails:response})   
     } catch (error) {
         console.error("Error from profile",error)
@@ -107,8 +124,6 @@ export const profile=async (req,res)=>{
 export const uploadPost=async (req,res)=>{
   try {
       console.log("upload section");
-      // console.log(req.body);
-      // console.log(req.file);
       const {id} =req.token
       const {path} =req.file
       const {title}=req.body
@@ -128,10 +143,14 @@ export const uploadPost=async (req,res)=>{
         publicId:cloudinaryResult.public_id
        });
        let result=await user.save();
+       let newPost=result.posts[result.posts.length -1]
        console.log(result);
-       return res.status(200).json({message:"Post Added Successfully"})
+       return res.status(200).json({message:"Post Added Successfully",result})
+      }else{
+        console.log("User not found");
+        return res.status(404).json({message:"User not found"})    
       }
-      return res.status(400).json({message:"cant add image now"})    
+    
   } catch (error) {
       console.error("Error from upload",error)
       return res.status(500).json({message:"Internal server error"})

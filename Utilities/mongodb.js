@@ -1,5 +1,9 @@
 import mongoose from "mongoose";
-mongoose.connect('mongodb://127.0.0.1:27017/Social-Stream',{
+import env from "dotenv"
+env.config()
+
+
+mongoose.connect(process.env.MONGOPASSWORD,{
 });
 
 const customConnection = mongoose.connection
