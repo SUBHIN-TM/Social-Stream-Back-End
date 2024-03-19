@@ -17,7 +17,7 @@ env.config()
         next();
         })
      }else{
-        return res.status(403).json({relogin:true})
+        next();
      }
     }
 
