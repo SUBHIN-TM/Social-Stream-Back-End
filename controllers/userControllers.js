@@ -239,6 +239,10 @@ export const addComment = async (req, res) => {
       { new: true }
     );
     
+    if(result){
+      console.log(result);
+      return res.status(200).json({ message: "Comment Updated ",result })
+    }
  
   } catch (error) {
     console.error("Error from addComment", error)
