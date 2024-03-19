@@ -10,9 +10,8 @@ export const home=async (req,res)=>{
         console.log("Home section");            
         let result = await User.find();
         let onlyPosts = result.flatMap((user) =>
-          user.posts.map((post) => ({ ...post.toObject(), name: user.name,mail:user.mail,userId:user._id }))
+          user.posts.map((post) => ({ ...post.toObject(), userName: user.name,mail:user.mail,userId:user._id,profileImage:user.profileImage }))
         );
-        
         console.log(onlyPosts);
         
 
@@ -143,7 +142,7 @@ export const uploadPost=async (req,res)=>{
         publicId:cloudinaryResult.public_id
        });
        let result=await user.save();
-       let newPost=result.posts[result.posts.length -1]
+      //  let newPost=result.posts[result.posts.length -1]
        console.log(result);
        return res.status(200).json({message:"Post Added Successfully",result})
       }else{
@@ -153,6 +152,38 @@ export const uploadPost=async (req,res)=>{
     
   } catch (error) {
       console.error("Error from upload",error)
+      return res.status(500).json({message:"Internal server error"})
+  }
+ 
+}
+
+
+export const profilePicture=async (req,res)=>{
+  try {
+      console.log("profilePicture section");
+      const {id} =req.token
+      const {path} =req.file
+      console.log(req.file);
+      const cloudinaryResult = await cloudinary.uploader.upload(path, { folder: 'Social Stream Feeds' });
+      if(cloudinaryResult){
+        console.log("succesfully saved in cloudinary",cloudinaryResult);
+      }else{
+        return res.status(400).json({message:"cant add image now"})
+      }
+
+      const user=await User.findOne({_id:id})
+      if(user){
+       user.profileImage=cloudinaryResult.secure_url;   
+       let result=await user.save();
+       console.log(result);
+       return res.status(200).json({message:"Profile Picture Changed"})
+      }else{
+        console.log("User not found");
+        return res.status(404).json({message:"User not found"})    
+      }
+    
+  } catch (error) {
+      console.error("Error from profilePicture",error)
       return res.status(500).json({message:"Internal server error"})
   }
  
