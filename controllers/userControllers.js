@@ -185,20 +185,27 @@ export const profilePicture = async (req, res) => {
 
 export const addLike = async (req, res) => {
   try {
-    console.log("addLike section");
-    const { postId, userId } = req.body
+    console.log("Like section");
+    let { postId, userId } = req.body
     const { name } = req.token
-    console.log(postId, name);
+    // console.log(req.body);
+    if(req.body.ownProfile){
+     userId=req.token.id
+    }
+     console.log(postId, name);
 
     let user = await User.findOne({ _id: userId, "posts._id": postId });
-    let isNameExists = user && user.posts.some(post => post.likes.includes(name));
+    let currentPost=user.posts.filter((posts)=>posts._id == postId)
+    // console.log("post",currentPost);
+    let isNameExists = currentPost[0].likes.includes(name);
     if(isNameExists){
       let result = await User.findOneAndUpdate(
       { _id: userId, "posts._id": postId },
       {$pull: { "posts.$.likes": name } },
       { new: true }
     );
-    console.log("Like REMOVED",result);
+    // console.log(isNameExists);
+    console.log("Like REMOVED");
     return res.status(200).json({ message: "Like Updated ",result })
     }else{
        let result = await User.findOneAndUpdate(
@@ -206,7 +213,7 @@ export const addLike = async (req, res) => {
       { $push: { "posts.$.likes": name } },
       { new: true }
     );
-    console.log("Like ADDED",result);
+    console.log("Like ADDED");
     return res.status(200).json({ message: "Like Updated ",result })
     }
 
@@ -222,9 +229,13 @@ export const addLike = async (req, res) => {
 export const addComment = async (req, res) => {
   try {
     console.log("addComment section");
-    const { postId, userId,comment } = req.body
+    let { postId, userId,comment } = req.body
     const { name } = req.token
-    console.log(postId, name);
+    // console.log(postId, name);
+    if(req.body.ownProfile){
+      userId=req.token.id
+     }
+
 
     let result = await User.findOneAndUpdate(
       { _id: userId, "posts._id": postId },
