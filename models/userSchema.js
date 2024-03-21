@@ -2,10 +2,15 @@ import mongoose from "../Utilities/mongodb.js";
 import {format} from 'date-fns'
 
 
+
 const postSchema = new mongoose.Schema({
     postName: { type: String },
     postImage: { type: String },
     publicId: { type: String },
+    notifications: [{
+        message: { type: String },
+        time: { type: String },
+    }],
     likes: [{ type: String }],
     comments: [{
         name: { type: String },

@@ -210,7 +210,7 @@ export const addLike = async (req, res) => {
     }else{
        let result = await User.findOneAndUpdate(
       { _id: userId, "posts._id": postId },
-      { $push: { "posts.$.likes": name } },
+      { $push: { "posts.$.likes": name ,"posts.$.notifications":{message:`${name} Liked 👍 Your Post`,time: new Date().toISOString()}}},
       { new: true }
     );
     console.log("Like ADDED");
@@ -240,12 +240,7 @@ export const addComment = async (req, res) => {
     let result = await User.findOneAndUpdate(
       { _id: userId, "posts._id": postId },
       {
-        $push: {
-          "posts.$.comments": {
-            name: name,
-            content: comment
-          }
-        }
+        $push: {"posts.$.comments": { name: name,content: comment,},"posts.$.notifications":{message:`${name} Commented "${comment}" on Your Post `,time: new Date().toISOString()}}
       },
       { new: true }
     );
@@ -261,3 +256,24 @@ export const addComment = async (req, res) => {
   }
 
 }
+
+
+export const notifications = async (req, res) => {
+  try {
+    console.log("notifications section");
+    const response = await User.findOne({ mail: req.token.mail })
+   let notificBase=[]
+    let notific=response?.posts?.map((data)=>{
+        return notificBase.push(...data?.notifications) 
+    })
+    console.log(notificBase.flat());
+    return res.status(200).json({notifications:notificBase.flat()})
+ 
+  } catch (error) {
+    console.error("Error from notifications", error)
+    return res.status(500).json({ message: "Internal server error" })
+  }
+}
+
+
+

@@ -4,7 +4,7 @@ import multer from 'multer';
 const uploads =multer({dest:"uploads/"})
 import verify from '../midleware/jwtParcedToReq.js';
 import authorization from '../midleware/jwtAuthorization.js';
-import { home,login,signup,profile,uploadPost,profilePicture,addLike,addComment } from '../controllers/userControllers.js';
+import { home,login,signup,profile,uploadPost,profilePicture,addLike,addComment,notifications } from '../controllers/userControllers.js';
 
 router.get('/',verify,home,);
 router.post('/login',login);
@@ -14,6 +14,7 @@ router.post('/upload',verify,uploads.single('image'),uploadPost);
 router.post('/profilePicture',verify,uploads.single('image'),profilePicture);
 router.post('/addLike',authorization,verify,addLike);
 router.post('/addComment',authorization,verify,addComment);
+router.get('/notifications',authorization,verify,notifications);
 
 
 
