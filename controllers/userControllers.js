@@ -258,16 +258,17 @@ export const addComment = async (req, res) => {
 }
 
 
+
 export const notifications = async (req, res) => {
   try {
     console.log("notifications section");
     const response = await User.findOne({ mail: req.token.mail })
    let notificBase=[]
     let notific=response?.posts?.map((data)=>{
-        return notificBase.push(...data?.notifications) 
+        return notificBase.push(data?.notifications) 
     })
-    console.log(notificBase.flat());
-    return res.status(200).json({notifications:notificBase.flat()})
+    let finalAndSorted=notificBase.flat().sort((a, b) => new Date(b.time) - new Date(a.time))
+    return res.status(200).json({notifications:finalAndSorted,posts:response.posts})
  
   } catch (error) {
     console.error("Error from notifications", error)
