@@ -1,7 +1,7 @@
 import express from 'express' ;
 const router = express.Router();
 import multer from 'multer';
-const uploads =multer({dest:"uploads/"})
+const uploads = multer({ dest: '/tmp/' });
 import verify from '../midleware/jwtParcedToReq.js';
 import authorization from '../midleware/jwtAuthorization.js';
 import { home,login,signup,profile,uploadPost,profilePicture,addLike,addComment,notifications } from '../controllers/userControllers.js';
