@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken"
 import env from "dotenv"
 env.config()
 import cloudinary from "../Utilities/cloudinary.js"
+import fs from "fs"
 
 export const home = async (req, res) => {
   try {
@@ -123,6 +124,7 @@ export const uploadPost = async (req, res) => {
     const cloudinaryResult = await cloudinary.uploader.upload(path, { folder: 'Social Stream Feeds' });
     if (cloudinaryResult) {
       console.log("succesfully saved in cloudinary", cloudinaryResult);
+      fs.unlinkSync(path);
     } else {
       return res.status(400).json({ message: "cant add image now" })
     }
