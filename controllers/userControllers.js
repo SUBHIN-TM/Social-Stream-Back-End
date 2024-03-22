@@ -12,9 +12,11 @@ export const home = async (req, res) => {
     let onlyPosts = result.flatMap((user) =>
       user.posts.map((post) => ({ ...post.toObject(), userName: user.name, mail: user.mail, userId: user._id, profileImage: user.profileImage }))
     );
-    // console.log(onlyPosts);
+    let latest=onlyPosts.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))
+  
+    // console.log(latest);
     if (req.token) {
-      return res.status(200).json({ name: req.token.name, details: req.token, allPosts: onlyPosts })
+      return res.status(200).json({ name: req.token.name, details: req.token, allPosts: latest })
     } else {
       return res.status(200).json({ allPosts: onlyPosts })
     }
@@ -31,7 +33,7 @@ export const home = async (req, res) => {
 export const login = async (req, res) => {
   try {
     console.log('To Do Login Section');
-    console.log(req.body);
+    // console.log(req.body);
     const mail = req.body.name
     const password = req.body.password
     const existing = await User.findOne({ mail: mail })
@@ -43,7 +45,7 @@ export const login = async (req, res) => {
     if (!passwordMatch) {
       return res.json({ passwordMissmatch: true })
     } else {
-      console.log(existing);
+      // console.log(existing);
       const payload = { id: existing._id, name: existing.name, mail: existing.mail }
       let key = process.env.JWT_KEY
       let token = jwt.sign(payload, key, { expiresIn: '24h' })
@@ -62,7 +64,7 @@ export const login = async (req, res) => {
 export const signup = async (req, res) => {
   try {
     console.log('To Do signup Section');
-    console.log(req.body);
+    // console.log(req.body);
     let { name, password, mail } = req.body;
     const existing = await User.findOne({ mail: mail })
     const existingName = await User.findOne({ name: name })
@@ -82,7 +84,7 @@ export const signup = async (req, res) => {
         mail,
       });
       const result = await user.save();
-      console.log("Registered", result);
+      // console.log("Registered", result);
       return res.json({ registered: true, result });
     }
 
@@ -117,7 +119,7 @@ export const uploadPost = async (req, res) => {
     const { id } = req.token
     const { path } = req.file
     const { title } = req.body
-    console.log(path, title);
+    // console.log(path, title);
     const cloudinaryResult = await cloudinary.uploader.upload(path, { folder: 'Social Stream Feeds' });
     if (cloudinaryResult) {
       console.log("succesfully saved in cloudinary", cloudinaryResult);
@@ -134,7 +136,7 @@ export const uploadPost = async (req, res) => {
       });
       let result = await user.save();
       //  let newPost=result.posts[result.posts.length -1]
-      console.log(result);
+      // console.log(result);
       return res.status(200).json({ message: "Post Added Successfully", result })
     } else {
       console.log("User not found");
@@ -154,7 +156,7 @@ export const profilePicture = async (req, res) => {
     console.log("profilePicture section");
     const { id } = req.token
     const { path } = req.file
-    console.log(req.file);
+    // console.log(req.file);
     const cloudinaryResult = await cloudinary.uploader.upload(path, { folder: 'Social Stream Feeds' });
     if (cloudinaryResult) {
       console.log("succesfully saved in cloudinary", cloudinaryResult);
