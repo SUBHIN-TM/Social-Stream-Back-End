@@ -8,9 +8,10 @@ import  {connect} from "./Utilities/mongodb.js";
 
 const app=express()
 const port=3000
-var allowedOrigins = ['http://localhost:5173', 'http://anotherexample.com'];
-app.use(cors())
+// var allowedOrigins = ['http://localhost:5173', 'http://anotherexample.com'];
 app.use(express.json())
+app.use(cors())
+
 
 // app.use(cors({
 //     origin:(origin,callback)=>{
