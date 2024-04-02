@@ -7,7 +7,7 @@ env.config()
      if(typeof authHeader !== 'undefined'){
      next()
      }else{
-        return res.status(403).json({noAuth:true})
+        return res.status(401).json({noAuth:true})
      }
     }
 

@@ -1,7 +1,4 @@
 import mongoose from "../Utilities/mongodb.js";
-import {format} from 'date-fns'
-
-
 
 const postSchema = new mongoose.Schema({
     postName: { type: String },

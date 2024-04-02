@@ -214,7 +214,7 @@ export const addLike = async (req, res) => {
     }else{
        let result = await User.findOneAndUpdate(
       { _id: userId, "posts._id": postId },
-      { $push: { "posts.$.likes": name ,"posts.$.notifications":{message:`${name} Liked 👍 Your Post`,time: new Date().toISOString()}}},
+      { $push: { "posts.$.likes": name ,"posts.$.notifications":{message:`${name} Liked 👍`,time: new Date().toISOString()}}},
       { new: true }
     );
     console.log("Like ADDED");
@@ -244,7 +244,7 @@ export const addComment = async (req, res) => {
     let result = await User.findOneAndUpdate(
       { _id: userId, "posts._id": postId },
       {
-        $push: {"posts.$.comments": { name: name,content: comment,},"posts.$.notifications":{message:`${name} Commented "${comment}" on Your Post `,time: new Date().toISOString()}}
+        $push: {"posts.$.comments": { name: name,content: comment,},"posts.$.notifications":{message:`${name} Commented "${comment}" on  `,time: new Date().toISOString()}}
       },
       { new: true }
     );
