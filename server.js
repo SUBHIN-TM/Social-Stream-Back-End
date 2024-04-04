@@ -8,21 +8,21 @@ import user from "./routers/user.js"
 
 const app=express()
 const port=3000
-// var allowedOrigins = ['http://localhost:5173', 'http://anotherexample.com'];
+var allowedOrigins = ['http://localhost:5173', 'https://social-stream-wine.vercel.app/'];
 
 app.use(express.json())
-app.use(cors())
+// app.use(cors())
 
 
-// app.use(cors({
-//     origin:(origin,callback)=>{
-//         if(!origin || allowedOrigins.includes(origin)){
-//             callback(null,true)
-//         }else{
-//             callback(new Error('your oringin is not allowed by cors'))
-//         }
-//     }
-// }))
+app.use(cors({
+    origin:(origin,callback)=>{
+        if(!origin || allowedOrigins.includes(origin)){
+            callback(null,true)
+        }else{
+            callback(new Error('your oringin is not allowed by cors'))
+        }
+    }
+}))
 
 
 app.use('/',user)
