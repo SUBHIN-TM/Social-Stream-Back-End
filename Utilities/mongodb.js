@@ -3,13 +3,13 @@ import env from "dotenv"
 env.config()
 
 
-//  export let connect=()=>{
-//     mongoose.connect(process.env.MONGOPASSWORD);
-// }
+ export let connect=()=>{
+    mongoose.connect(process.env.MONGOPASSWORD);
+}
 
-mongoose.connect(process.env.MONGOPASSWORD,{
+// mongoose.connect(process.env.MONGOPASSWORD,{
     
-});
+// });
 
 
 const customConnection = mongoose.connection
