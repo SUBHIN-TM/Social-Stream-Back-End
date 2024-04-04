@@ -8,7 +8,7 @@ import user from "./routers/user.js"
 
 const app=express()
 const port=3000
-var allowedOrigins = ['http://localhost:5173', 'https://social-stream-wine.vercel.app/'];
+var allowedOrigins = ['http://localhost:5173', 'https://social-stream-wine.vercel.app'];
 
 app.use(express.json())
 // app.use(cors())
